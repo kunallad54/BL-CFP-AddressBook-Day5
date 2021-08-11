@@ -2,8 +2,10 @@ package com.bridgelabz.krunal.addressbookapp.service;
 
 import com.bridgelabz.krunal.addressbookapp.dto.AddressBookDTO;
 import com.bridgelabz.krunal.addressbookapp.entity.AddressBook;
+import com.bridgelabz.krunal.addressbookapp.exceptions.AddressBookCustomException;
 import com.bridgelabz.krunal.addressbookapp.repository.AddressBookRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,10 +64,8 @@ public class AddressBookService {
      */
     public AddressBook updatePersonDetails(int id, AddressBookDTO addressBookDTO) {
         AddressBook updateData = findPersonByID(id);
-        updateData.setPersonName(addressBookDTO.getPersonName());
-        updateData.setPersonAddress(addressBookDTO.getPersonAddress());
-        updateData.setPersonEmail(addressBookDTO.getPersonEmail());
-        updateData.setPersonMobileNo(addressBookDTO.getPersonMobileNo());
+        String[] ignoreFields = {"personID"};
+        BeanUtils.copyProperties(addressBookDTO,updateData,ignoreFields);
         addressBookRepository.save(updateData);
         return updateData;
     }
@@ -76,10 +76,11 @@ public class AddressBookService {
      * @param id
      * @return
      */
-    public String deletePersonDetails(int id) {
+    public AddressBook deletePersonDetails(int id) {
         AddressBook addressBook = findPersonByID(id);
         addressBookRepository.delete(addressBook);
-        return "Deleted Person Details Sucessfully !!!";
+        System.out.println("Deleted Successfully !!!");
+        return addressBook;
     }
 
     /**
@@ -91,6 +92,6 @@ public class AddressBookService {
     public AddressBook findPersonByID(int id) {
         return addressBookRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Unable to find the person with that ID"));
+                .orElseThrow(() -> new AddressBookCustomException("Unable to find the person with that ID"));
     }
 }
