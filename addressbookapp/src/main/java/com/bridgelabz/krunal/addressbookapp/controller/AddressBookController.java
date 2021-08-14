@@ -71,7 +71,8 @@ public class AddressBookController {
     @GetMapping(value = "/getPersonByID")
     public ResponseEntity<ResponseDTO> getPersonByID(@RequestParam(name = "id") int id) {
         AddressBook personByID = addressBookService.findPersonByID(id);
-        ResponseDTO responseDTO = new ResponseDTO("Get Call with Person ID Successfull",personByID);
+        ResponseDTO responseDTO = new ResponseDTO("Get Call with Person ID Successfull",
+                personByID);
         logger.debug("Inside getPersonByID() method");
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
